@@ -1,0 +1,138 @@
+<!-- templates/books/book_list.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book List</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8fafc;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #0044cc;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        header h1 {
+            margin: 0;
+        }
+        nav {
+            margin-top: 10px;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: bold;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        main {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            background-color: #f1f1f1;
+            margin-bottom: 20px;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        li h2 {
+            margin: 0 0 10px;
+        }
+        .containbutton{
+            display: flex;
+            flex-direction: row;
+            gap: 2px;
+        }
+        button {
+            background-color: #0044cc;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #0033a0;
+        }
+        footer p{
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Book List</h1>
+        <nav>
+            <a href="{% url 'account_login' %}">Login</a>
+            <a href="{% url 'account_signup' %}">Signup</a>
+            <a href="{% url 'book_list' %}">Books</a>
+            {% if request.user.email == 'emmyzizo1@gmail.com' %}
+                <a href="{% url 'add_book' %}">Add Book</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    <main>
+        {% for message in messages %}
+            <div class="message">{{ message }}</div>
+        {% endfor %}
+
+        {% if books %}
+            <ul>
+                {% for book in books %}
+                    <li>
+                        <h2>{{ book.title }}</h2>
+                        <p>{{ book.description }}</p>
+                        <p>Status: {% if book.available %}Available{% else %}Rented{% endif %}</p>
+                        <p>Author: {{ book.author }}</p>
+                        <div class="containbutton">
+                        <form method="POST" action="{% url 'rent_book' book.title %}">
+                            {% csrf_token %}
+                            <button type="submit">Rent Book</button>
+                        </form>
+                        {% if request.user.email == 'emmyzizo1@gmail.com' %}
+                            <form method="POST" action="{% url 'delete_book' book.title %}">
+                                {% csrf_token %}
+                                <button type="submit">Delete Book</button>
+                            </form>
+                        {% endif %}
+                        {% if not book.available %}
+                            <form method="POST" action="{% url 'return_book' book.title %}">
+                                {% csrf_token %}
+                                <button type="submit">Return Book</button>
+                            </form></div>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No books available. Please check back later!</p>
+        {% endif %}
+    </main>
+
+    <footer>
+        <p>&copy; {{ current_year }} Your Book Rental Service</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,14 @@
+Django
+djangorestframework
+django-allauth
+psycopg2
+django-environ
+gunicorn
+whitenoise
+celery
+redis
+python-dotenv
+PyJWT  # JWT support
+requests
+cryptography
+
